@@ -1,0 +1,135 @@
+version: "3.4"
+
+name: "media"
+
+services:
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - WEBUI_PORT=8080
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/fernando/qbittorrent/config:/config
+      - /mnt/terachad/Downloads/torrents:/downloads
+    ports:
+      - "8080:8080"
+      - "62609:62609"
+  # Pesquisa de sites de torrents
+  jackett:
+    image: ghcr.io/linuxserver/jackett:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/fernando/jackett/downloads:/downloads
+      - /home/fernando/jackett/config:/config
+    ports:
+      - "9117:9117"
+  # Busca de titulos para baixar em DB publico
+  overseerr:
+    image: sctx/overseerr
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=America/Sao_Paulo
+      - PORT=5055
+    volumes:
+      - /home/fernando/overseerr/config:/app/config
+    ports:
+      - "5055:5055"
+  # Busca e download automatico de filmes
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/fernando/radarr/appdata/config:/config
+      - /mnt/terachad/Downloads/torrents:/downloads
+      - /mnt/terachad/Videos/radarr/movies:/movies
+      - /mnt/terachad/Videos/radarr/anime:/anime
+    ports:
+      - "7878:7878"
+  # Busca e download automatico de series
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/fernando/sonarr/appdata/config:/config
+      - /mnt/terachad/Downloads/torrents:/downloads
+      - /mnt/terachad/Videos/sonarr:/tv
+    ports:
+      - "8989:8989"
+  # ProxyServer
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart: unless-stopped
+    volumes:
+      - /home/fernando/flaresolverr/config:/config
+    ports:
+      - "8191:8191"
+  # Indexador de torrents para o sonarr e radarr
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr:latest
+    restart: unless-stopped
+    depends_on:
+      - flaresolverr
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/fernando/prowlarr/config:/config
+    ports:
+      - "9696:9696"
+  # Busca de legendas
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /mnt/terachad/Videos/radarr:/movies
+      - /mnt/terachad/Videos/sonarr:/tv
+      - /home/fernando/bazarr/appdata/config:/config
+    ports:
+      - "6767:6767"
+  # Reprodutor de midia/stream app
+  plex:
+    image: plexinc/pms-docker:latest
+    restart: unless-stopped
+    depends_on:
+      - flaresolverr
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+      - VA_DRIVER=IHD
+      - PLEX_HW_TRANS_MAX=16
+    volumes:
+      - /home/fernando/plex/config:/config
+      - /home/fernando/plex/data:/data
+      - /home/fernando/plex/transcode:/transcode
+      - /mnt/terachad/Videos:/media
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/bus/usb:/dev/bus/usb
+    network_mode: host

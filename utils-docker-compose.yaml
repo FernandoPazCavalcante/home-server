@@ -1,0 +1,49 @@
+version: "3.4"
+
+name: "utils"
+
+volumes:
+  portainer_data:
+
+services:
+  # Gerenciador de container: UI para visualizar os containers
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: unless-stopped
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+  # Teste de conexão na rede local
+  librespeed:
+    image: lscr.io/linuxserver/librespeed:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/fernando/librespeed:/config
+    ports:
+      - "9091:80"
+  # Atualizador de containers
+  watchtower:
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    cap_add:
+      - NET_RAW
+      - SETUID
+  # VPN - Zerotier ou Tailscale
+  zerotier:
+    image: zerotier/zerotier:latest
+    restart: unless-stopped
+    volumes:
+      - /home/fernando/zerotier:/var/lib/zerotier-one
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+    network_mode: host
