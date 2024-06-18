@@ -1,10 +1,7 @@
 version: "3.4"
-
 name: "utils"
-
 volumes:
   portainer_data:
-
 services:
   # Gerenciador de container: UI para visualizar os containers
   portainer:
@@ -13,6 +10,8 @@ services:
     volumes:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9000:9000"
   # Teste de conexão na rede local
   librespeed:
     image: lscr.io/linuxserver/librespeed:latest
