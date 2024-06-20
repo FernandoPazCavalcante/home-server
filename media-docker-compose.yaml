@@ -13,7 +13,7 @@ services:
       - PGID=1000
     volumes:
       - /home/fernando/qbittorrent/config:/config
-      - /mnt/terachad/Downloads/torrents:/downloads
+      - /media/fernando/HD/terachad/Downloads/torrents:/downloads
     ports:
       - "8080:8080"
       - "62609:62609"
@@ -55,9 +55,9 @@ services:
       - PGID=1000
     volumes:
       - /home/fernando/radarr/appdata/config:/config
-      - /mnt/terachad/Downloads/torrents:/downloads
-      - /mnt/terachad/Videos/radarr/movies:/movies
-      - /mnt/terachad/Videos/radarr/anime:/anime
+      - /media/fernando/HD/terachad/Downloads/torrents:/downloads
+      - /media/fernando/HD/terachad/Videos/radarr/movies:/movies
+      - /media/fernando/HD/terachad/Videos/radarr/anime:/anime
     ports:
       - "7878:7878"
   # Busca e download automatico de series
@@ -72,8 +72,8 @@ services:
       - PGID=1000
     volumes:
       - /home/fernando/sonarr/appdata/config:/config
-      - /mnt/terachad/Downloads/torrents:/downloads
-      - /mnt/terachad/Videos/sonarr:/tv
+      - /media/fernando/HD/terachad/Downloads/torrents:/downloads
+      - /media/fernando/HD/terachad/Videos/sonarr:/tv
     ports:
       - "8989:8989"
   # ProxyServer
@@ -107,8 +107,8 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - /mnt/terachad/Videos/radarr:/movies
-      - /mnt/terachad/Videos/sonarr:/tv
+      - /media/fernando/HD/terachad/Videos/radarr:/movies
+      - /media/fernando/HD/terachad/Videos/sonarr:/tv
       - /home/fernando/bazarr/appdata/config:/config
     ports:
       - "6767:6767"
