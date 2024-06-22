@@ -1,7 +1,5 @@
 version: "3.4"
-
 name: "media"
-
 services:
   qbittorrent:
     image: linuxserver/qbittorrent:latest
@@ -128,7 +126,7 @@ services:
       - /home/fernando/plex/config:/config
       - /home/fernando/plex/data:/data
       - /home/fernando/plex/transcode:/transcode
-      - /mnt/terachad/Videos:/media
+      - /media/fernando/HD/terachad/Videos:/media
     devices:
       - /dev/dri:/dev/dri
       - /dev/bus/usb:/dev/bus/usb
