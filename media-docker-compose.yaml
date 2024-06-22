@@ -142,6 +142,8 @@ services:
       - /home/fernando/plex/data:/data
       - /home/fernando/plex/transcode:/transcode
       - /media/fernando/HD/terachad/Videos:/media
+      - /media/fernando/HD/terachad/Musics:/media
+
     devices:
       - /dev/dri:/dev/dri
       - /dev/bus/usb:/dev/bus/usb
