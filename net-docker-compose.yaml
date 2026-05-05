@@ -1,0 +1,33 @@
+name: "net"
+
+services:
+  # Remover anuncios e propagandas
+  pihole:
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    container_name: pihole
+    ports:
+      - "${HOST_LAN_IP}:53:53/tcp" # DNS
+      - "${HOST_LAN_IP}:53:53/udp" # DNS
+    environment:
+      - DNSMASQ_USER=pihole
+      - TZ=${TZ}
+      - PIHOLE_DNS_=1.1.1.1;1.0.0.1;8.8.8.8;8.8.4.4
+      - WEB_PORT=8053
+      - FTLCONF_dns_listeningMode=ALL
+      - FTLCONF_misc_etc_dnsmasq_d=true
+    volumes:
+      - ./pihole/etc-pihole:/etc/pihole
+      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    cap_add:
+      - NET_RAW
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: pihole.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 8053}}"
+
+networks:
+  caddy:
+    external: true

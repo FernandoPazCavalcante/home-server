@@ -1,0 +1,7 @@
+include:
+  - proxy-docker-compose.yaml
+  - books-docker-compose.yaml
+  - media-docker-compose.yaml
+  - net-docker-compose.yaml
+  - utils-docker-compose.yaml
+  - plex-docker-compose.yaml

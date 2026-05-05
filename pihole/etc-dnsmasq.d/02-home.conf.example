@@ -1,0 +1,8 @@
+# Template — copy to 02-home.conf and edit before bringing pihole up.
+#
+# Resolve every *.<HOME_DOMAIN> to the home-server LAN IP so LAN/VPN clients
+# reach the local Caddy reverse proxy instead of the public internet.
+#
+# Replace home.example.com with your HOME_DOMAIN (matches .env) and
+# 192.168.1.10 with the LAN IP of the host running Caddy.
+address=/home.example.com/192.168.1.10

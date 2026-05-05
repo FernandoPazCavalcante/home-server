@@ -1,0 +1,12 @@
+.env
+
+# pihole runtime data (DBs, gravity, password hash, mounted dnsmasq overrides).
+# Only the template file is tracked.
+pihole/*
+!pihole/etc-dnsmasq.d/
+pihole/etc-dnsmasq.d/*
+!pihole/etc-dnsmasq.d/02-home.conf.example
+
+# Caddy runtime data (cert storage, ACME state, build artifacts).
+proxy/data/
+proxy/config/

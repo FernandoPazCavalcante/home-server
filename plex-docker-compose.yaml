@@ -1,0 +1,30 @@
+name: "plex"
+
+services:
+  # Reprodutor de midia/stream app
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    restart: unless-stopped
+    container_name: plex
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - VA_DRIVER=IHD
+      - PLEX_HW_TRANS_MAX=16
+    volumes:
+      - ${MEDIA_DATA_DIR}/movies:/movies
+      - ${MEDIA_DATA_DIR}/Musics:/musics
+      - ./plex:/config
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/bus/usb:/dev/bus/usb
+    network_mode: host
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN_PLEX}
+    network_mode: host

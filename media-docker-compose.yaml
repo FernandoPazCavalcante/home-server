@@ -1,0 +1,173 @@
+name: "media"
+
+services:
+  # temp admin password in the container log
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    restart: unless-stopped
+    container_name: qbittorrent
+    environment:
+      - TZ=${TZ}
+      - WEBUI_PORT=8080
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ./qbittorrent/config:/config
+      - ${MEDIA_DATA_DIR}/Downloads/torrents:/downloads
+    ports:
+      - "44575:44575"
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: qbittorrent.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+  # Pesquisa de sites de torrents
+  jackett:
+    image: ghcr.io/linuxserver/jackett:latest
+    restart: unless-stopped
+    container_name: jackett
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+    volumes:
+      - ${MEDIA_DATA_DIR}/jackett/downloads:/downloads
+      - ./jackett/config:/config
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: jackett.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 9117}}"
+  # Busca de titulos para baixar em DB publico
+  overseerr:
+    image: sctx/overseerr
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=${TZ}
+      - PORT=5055
+    volumes:
+      - ${MEDIA_DATA_DIR}/overseerr/config:/app/config
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: overseerr.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 5055}}"
+  # Busca e download automatico de filmes
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${MEDIA_DATA_DIR}/radarr/appdata/config:/config
+      - ${MEDIA_DATA_DIR}/Downloads/torrents:/downloads
+      - ${MEDIA_DATA_DIR}/Videos/radarr/movies:/movies
+      - ${MEDIA_DATA_DIR}/Videos/radarr/anime:/anime
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: radarr.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 7878}}"
+  # Busca e download automatico de series
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    depends_on:
+      - qbittorrent
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${MEDIA_DATA_DIR}/sonarr/appdata/config:/config
+      - ${MEDIA_DATA_DIR}/Downloads/torrents:/downloads
+      - ${MEDIA_DATA_DIR}/Videos/sonarr:/tv
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: sonarr.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 8989}}"
+  # Music server
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+      - TZ=${TZ}
+    volumes:
+      - ./lidarr/config:/config
+      - ${MEDIA_DATA_DIR}/Downloads/torrents:/downloads
+      - ${MEDIA_DATA_DIR}/Musics:/musics
+    restart: unless-stopped
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: lidarr.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 8686}}"
+  # ProxyServer
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart: unless-stopped
+    container_name: flaresolverr
+    volumes:
+      - ./flaresolverr/config:/config
+    ports:
+      - "8191:8191"
+  # Indexador de torrents para o sonarr e radarr
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr:latest
+    restart: unless-stopped
+    container_name: prowlarr
+    depends_on:
+      - flaresolverr
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=${UMASK}
+    volumes:
+      - ./prowlarr/config:/config
+      - ${MEDIA_DATA_DIR}/Downloads/torrents:/downloads
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: prowlarr.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 9696}}"
+  # Busca de legendas
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${MEDIA_DATA_DIR}/Videos/radarr:/movies
+      - ${MEDIA_DATA_DIR}/Videos/sonarr:/tv
+      - ${MEDIA_DATA_DIR}/bazarr/appdata/config:/config
+    networks:
+      - default
+      - caddy
+    labels:
+      caddy: bazarr.${HOME_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 6767}}"
+
+networks:
+  caddy:
+    external: true

@@ -1,0 +1,29 @@
+name: "proxy"
+
+services:
+  caddy:
+    build:
+      context: ./proxy
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    environment:
+      - CADDY_INGRESS_NETWORKS=caddy
+      - CADDY_DOCKER_CADDYFILE_PATH=/etc/caddy/Caddyfile
+      - HOME_DOMAIN=${HOME_DOMAIN}
+      - ACME_EMAIL=${ACME_EMAIL}
+      - CF_API_TOKEN=${CF_API_TOKEN}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./proxy/data:/data
+      - ./proxy/config:/config
+    networks:
+      - caddy
+
+networks:
+  caddy:
+    external: true
