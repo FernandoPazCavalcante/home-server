@@ -64,6 +64,8 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
     restart: unless-stopped
+    ports:
+      - 8084:8084
     networks:
       - default
       - caddy
