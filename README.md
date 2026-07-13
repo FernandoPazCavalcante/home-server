@@ -6,6 +6,7 @@ Docker Compose stacks for a self-hosted home server. Each stack lives in its own
 
 - [`docs/setup.md`](docs/setup.md) — first-run checklist (Cloudflare token, dnsmasq, Zerotier, host forwarding).
 - [`docs/troubleshooting-pihole-dns.md`](docs/troubleshooting-pihole-dns.md) — pihole/DNS issues hit during initial setup and their fixes.
+- [`docs/calibre-gmail-oauth.md`](docs/calibre-gmail-oauth.md) — Gmail OAuth setup for Calibre-Web Automated (gmail.json, Docker workarounds, frozen-UI fix).
 
 ## Setup
 
