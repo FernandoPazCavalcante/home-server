@@ -4,8 +4,6 @@
 - lazyswap: File-based logger only (`internal/applog` → `~/.lazyswap/lazyswap.log`). No external monitoring/tracing.
 
 **Infrastructure**
-- flagsmith-charts: Prometheus ServiceMonitor support configurable in `values.yaml` (`serviceMonitor.enabled`). No external monitoring tooling configured in repo.
-- home-server: Watchtower for automatic container image updates. No logging/tracing stack configured.
+- flagsmith-charts: Prometheus ServiceMonitor support configurable in `values.yaml` (`serviceMonitor.enabled`). No external monitoring tooling configured in repo itself.
 
-**Not configured:** marketingskills, resume, rinha-de-backend-2024-q1.
-
+All other repos: No observability tooling configured.
