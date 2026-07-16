@@ -4,6 +4,8 @@
 
 **What they build**
 
-Fernando Paz Cavalcante develops self-custody cryptocurrency infrastructure and developer tooling. The primary product is **lazyswap**, a terminal-based wallet (TUI/CLI) enabling decentralized exchange swaps and cross-chain Bitcoin transactions with local key management. Secondary projects include curated AI agent skills for Claude Code, Helm charts for self-hosting Flagsmith feature flags on Kubernetes, and a comprehensive Docker Compose home-server stack (reverse proxy, DNS, media automation, VPN).
+Fernando Paz Cavalcante develops self-custody blockchain tooling and infrastructure automation. The primary product is **lazyswap**, a terminal-based wallet application enabling DEX swaps and cross-chain Bitcoin transactions with local key management. Secondary focus spans Kubernetes deployment automation (Flagsmith Helm charts), self-hosted infrastructure orchestration (Docker Compose home-server stacks), and AI agent skill curation for marketing workflows.
 
-**Tech approach:** Go-based backend (cryptography, blockchain integration), Node.js/Bash for tooling and infrastructure, Docker Compose and Kubernetes for orchestration. All infrastructure is self-hosted or GitHub-native; no cloud providers. CI/CD via GitHub Actions with semantic versioning and automated releases.
+**Core technical orientation**
+
+Go-based backend systems with cryptographic key management (AES-256-GCM); Kubernetes-native packaging; Docker containerization; GitHub Actions CI/CD with semantic versioning and cross-platform binary distribution. Infrastructure-as-code emphasis on self-hosting, Cloudflare integration, and decentralized service architecture.
