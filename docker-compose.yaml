@@ -5,3 +5,5 @@ include:
   - net-docker-compose.yaml
   - utils-docker-compose.yaml
   - plex-docker-compose.yaml
+  - podcasts-docker-compose.yaml
+  - auth-docker-compose.yaml

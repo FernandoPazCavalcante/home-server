@@ -32,6 +32,8 @@ make net-create
 | `net`   | `net-docker-compose.yaml`     | pihole                                                              | caddy + DNS :53            |
 | `utils` | `utils-docker-compose.yaml`   | portainer, librespeed, watchtower, zerotier                         | portainer/librespeed via caddy |
 | `plex`  | `plex-docker-compose.yaml`    | plex, cloudflared                                                   | cloudflared (public)       |
+| `podcasts` | `podcasts-docker-compose.yaml` | audiobookshelf, cloudflared (castopod on standby, commented out) | cloudflared (public)    |
+| `auth`  | `auth-docker-compose.yaml`    | keycloak, keycloak-db (postgres), cloudflared                       | cloudflared (public)       |
 
 ## Reverse proxy (Caddy)
 
@@ -87,6 +89,8 @@ make media     # auto-starts proxy, then media
 make net       # auto-starts proxy, then net (pihole)
 make utils     # auto-starts proxy, then utils
 make plex      # plex stack (uses its own cloudflared, no caddy dep)
+make podcasts  # podcasts stack (own cloudflared, no caddy dep)
+make auth      # auth stack (own cloudflared, no caddy dep)
 ```
 
 ### Stop one stack
@@ -98,6 +102,8 @@ make media-down
 make net-down
 make utils-down
 make plex-down
+make podcasts-down
+make auth-down
 ```
 
 `proxy` keeps running when individual proxied stacks are stopped, since other stacks may still need it.
@@ -111,6 +117,8 @@ make media-logs
 make net-logs
 make utils-logs
 make plex-logs
+make podcasts-logs
+make auth-logs
 ```
 
 ### Run everything
