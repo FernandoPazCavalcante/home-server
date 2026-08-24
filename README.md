@@ -54,6 +54,15 @@ Hostnames:
 | prowlarr   | `https://prowlarr.${HOME_DOMAIN}`    |
 | bazarr     | `https://bazarr.${HOME_DOMAIN}`      |
 
+Calibre-Web Automated is not behind Caddy — it goes out through its own cloudflared tunnel at `https://library.fernandocavalcante.com` (host port `8083` on the LAN). Its OPDS catalog, for e-reader apps (KOReader, Moon+, Aldiko), is:
+
+| Access | OPDS URL                                          |
+| ------ | ------------------------------------------------- |
+| Public | `https://library.fernandocavalcante.com/opds`     |
+| LAN    | `http://<host-lan-ip>:8083/opds`                  |
+
+OPDS uses HTTP Basic Auth with the calibre-web user/password.
+
 Pi-hole local DNS must resolve `*.${HOME_DOMAIN}` to the host LAN IP (or use `dnsmasq.d` entry: `address=/${HOME_DOMAIN}/<host-lan-ip>`).
 
 For VPN access via Zerotier:
