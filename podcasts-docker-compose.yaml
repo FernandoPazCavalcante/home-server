@@ -1,0 +1,88 @@
+---
+name: "podcasts"
+
+services:
+  # Castopod on standby — uncomment to bring it back (db/cache volumes are kept)
+  # castopod:
+  #   image: castopod/castopod:1
+  #   container_name: castopod
+  #   environment:
+  #     MYSQL_DATABASE: castopod
+  #     MYSQL_USER: castopod
+  #     MYSQL_PASSWORD: ${CASTOPOD_MYSQL_PASSWORD}
+  #     CP_BASEURL: "https://podcast.fernandocavalcante.com"
+  #     CP_ANALYTICS_SALT: ${CASTOPOD_ANALYTICS_SALT}
+  #     CP_CACHE_HANDLER: redis
+  #     CP_REDIS_HOST: castopod-redis
+  #     CP_REDIS_PASSWORD: ${CASTOPOD_REDIS_PASSWORD}
+  #     TZ: ${TZ}
+  #   volumes:
+  #     - type: bind
+  #       source: /run/media/fernando/Expansion/podcasts
+  #       target: /app/public/media
+  #       bind:
+  #         create_host_path: false
+  #   ports:
+  #     # Local access (the public hostname goes through cloudflared)
+  #     - 8086:8080
+  #   restart: unless-stopped
+  #   depends_on:
+  #     castopod-mariadb:
+  #       condition: service_healthy
+
+  # castopod-mariadb:
+  #   image: mariadb:12.1
+  #   container_name: castopod-mariadb
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${CASTOPOD_MYSQL_ROOT_PASSWORD}
+  #     MYSQL_DATABASE: castopod
+  #     MYSQL_USER: castopod
+  #     MYSQL_PASSWORD: ${CASTOPOD_MYSQL_PASSWORD}
+  #   volumes:
+  #     - castopod-db:/var/lib/mysql
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+  #     start_period: 10s
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
+
+  # castopod-redis:
+  #   image: redis:8.4-alpine
+  #   container_name: castopod-redis
+  #   command: --requirepass ${CASTOPOD_REDIS_PASSWORD}
+  #   volumes:
+  #     - castopod-cache:/data
+  #   restart: unless-stopped
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: /run/media/fernando/Expansion/podcasts
+        target: /podcasts
+        bind:
+          create_host_path: false
+      - audiobookshelf-config:/config
+      - audiobookshelf-metadata:/metadata
+    ports:
+      # Local access (the public hostname goes through cloudflared)
+      - 13378:80
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN_PODCASTS}
+
+volumes:
+  castopod-db:
+  castopod-cache:
+  audiobookshelf-config:
+  audiobookshelf-metadata:

@@ -1,5 +1,5 @@
 PROXIED_STACKS := books media net utils
-RAW_STACKS     := plex
+RAW_STACKS     := plex podcasts auth
 STACKS         := proxy $(PROXIED_STACKS) $(RAW_STACKS)
 CADDY_NETWORK  := caddy
 
